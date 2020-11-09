@@ -15,7 +15,7 @@ type Signal struct{}
 // Get returns a JSONChan by its ID.
 // Route places the Reader's data into its corresponding JSONChan.
 type WSRouter interface {
-	Get(id string) JSONChan
+	Get(id string) *JSONChan
 	Route(messageType int, r io.Reader) error
 }
 

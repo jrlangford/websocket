@@ -32,7 +32,7 @@ func NewEchoHandler(tb testing.TB, router WSRouter, exit *bool) func(w http.Resp
 		loop := true
 		for loop {
 			select {
-			case data := <-ws.Router.Get("dp"):
+			case data := <-ws.Router.Get("dp").Data:
 				//tb.Logf("Received %s", data)
 				err := ws.WriteTextMessage([]byte(fmt.Sprintf("%s", data)))
 				if err != nil {
@@ -40,8 +40,6 @@ func NewEchoHandler(tb testing.TB, router WSRouter, exit *bool) func(w http.Resp
 					loop = false
 					break
 				}
-			case data := <-ws.Router.Get("default"):
-				tb.Logf("Default: %s", data)
 			case err := <-ws.Errors:
 				tb.Logf("RX Err: %+v", err)
 				loop = false
@@ -59,6 +57,7 @@ func TestConnect(t *testing.T) {
 	echoServerExited := false
 
 	router := NewJSONRouter([]string{"dp"}, 20)
+	router.Get("dp").Flow = true
 
 	echo := NewEchoHandler(t, router, &echoServerExited)
 
